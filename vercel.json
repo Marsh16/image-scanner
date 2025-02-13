@@ -1,5 +1,7 @@
 {
-  "rewrites": [{ "source": "/main.py", "destination": "/main.py" }],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -10,5 +12,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/scan.py": {
+      "runtime": "python3.9"
+    }
+  }
 }
