@@ -9,17 +9,17 @@
     <input type="file" id="fileInput">
     <button type="button" id="uploadButton" onclick="uploadImage()">Upload</button>
     <br>
-<div style="display: flex;">
-    <img id="uploadedImage" src="#" width="50%" alt="Uploaded Image">
-    <img id="processedImage" src="#" width="50%" alt="Processed Image">
-</div>
+    <div style="display: flex;">
+        <img id="uploadedImage" src="#" width="50%" alt="Uploaded Image">
+        <img id="processedImage" src="#" width="50%" alt="Processed Image">
+    </div>
     <script>
         async function uploadImage() {
             var fileInput = document.getElementById('fileInput');
             var file = fileInput.files[0];
 
-            if(!file){
-                return alert("No file is selected!")
+            if (!file) {
+                return alert("No file is selected!");
             }
 
             var formData = new FormData();
@@ -37,6 +37,9 @@
             .then(data => {
                 if (data.success) {
                     console.log(data);
+                    // Display the processed image
+                    var processedImage = document.getElementById('processedImage');
+                    processedImage.src = 'data:image/jpeg;base64,' + data.image;
                 } else {
                     console.error('Error:', data.error);
                 }
