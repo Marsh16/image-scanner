@@ -15,7 +15,7 @@
   ],
   "functions": {
     "api/scan.py": {
-      "runtime": "python3.9"
+      "runtime": "vercel-python@0.5.0"
     }
   }
 }
