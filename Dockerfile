@@ -16,7 +16,9 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the requirements file into the container
 COPY requirements.txt .
-
+COPY entrypoint.sh .
+# Add execution permission to entrypoint script
+RUN chmod +x entrypoint.sh
 # Install the Python dependencies with detailed logging
 RUN pip install --no-cache-dir -r requirements.txt --log /app/pip-install.log
 
@@ -26,8 +28,11 @@ RUN pip uninstall -y ocrd-fork-pylsd && pip install ocrd-fork-pylsd
 # Copy the rest of the application code into the container
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 7070
+# # Expose the port the app runs on
+# EXPOSE 7070
 
-# Command to run the application
-CMD ["python", "main.py"]
+# # Command to run the application
+# CMD ["python", "main.py"]
+
+# Execute the app
+ENTRYPOINT [ "./entrypoint.sh" ]
