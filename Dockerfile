@@ -4,20 +4,30 @@ FROM python:3.9-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Install dependencies for OpenCV, pylsd, and build tools
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    build-essential \
+    cmake \
+    libatlas-base-dev \
+    gfortran \
+    && apt-get clean
+
 # Copy the requirements file into the container
 COPY requirements.txt .
 
-# Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install the Python dependencies with detailed logging
+RUN pip install --no-cache-dir -r requirements.txt --log /app/pip-install.log
+
+# Uninstall and reinstall ocrd-fork-pylsd to ensure it is properly compiled
+RUN pip uninstall -y ocrd-fork-pylsd && pip install ocrd-fork-pylsd
 
 # Copy the rest of the application code into the container
 COPY . .
 
-# Add execution permission to entrypoint script
-RUN chmod +x entrypoint.sh
-
 # Expose the port the app runs on
 EXPOSE 7070
 
-# Execute the app
-ENTRYPOINT ["./entrypoint.sh"]
+# Command to run the application
+CMD ["python", "main.py"]
