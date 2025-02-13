@@ -1,23 +1,17 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+import base64
 from scan import DocScanner
+import cv2
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all origins
 
-# Create the 'uploads' directory if it does not exist
-UPLOADS_DIR = 'uploads'
-OUTPUT_DIR = 'output'
-if not os.path.exists(UPLOADS_DIR):
-    os.makedirs(UPLOADS_DIR)
-if not os.path.exists(OUTPUT_DIR):
-    os.makedirs(OUTPUT_DIR)
 
 @app.route('/scan', methods=['POST'])
 def scan_image():
     # Check if the POST request has the file part
-    print("hello")
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'})
 
@@ -29,8 +23,8 @@ def scan_image():
         return jsonify({'error': 'No selected file'})
 
     if file:
-        # Save the uploaded file to the 'uploads' directory
-        file_path = os.path.join(UPLOADS_DIR, file.filename)
+        # Save the uploaded file to a temporary location
+        file_path = os.path.join('uploads', file.filename)
         file.save(file_path)
 
         # Initialize the document scanner
@@ -38,16 +32,16 @@ def scan_image():
 
         # Scan the uploaded image
         try:
-            scanner.scan(file_path)
-            result_path = os.path.join('output', os.path.basename(file_path))
-            return jsonify({'success': True, 'result_path': result_path})
+            scanned_image = scanner.scan(file_path)
+            os.remove(file_path)  # Remove the temporary file
+
+            # Encode the scanned image to base64
+            _, buffer = cv2.imencode('.jpg', scanned_image)
+            base64_image = base64.b64encode(buffer).decode('utf-8')
+            
+            return jsonify({'success': True, 'image': base64_image})
         except Exception as e:
             return jsonify({'error': str(e)})
 
-# Route to serve the scanned image
-@app.route('/output/<filename>')
-def serve_scanned_image(filename):
-    return send_from_directory(OUTPUT_DIR, filename)
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=7070, debug=True)
