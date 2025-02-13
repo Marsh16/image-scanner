@@ -13,9 +13,10 @@
       ]
     }
   ],
-  "functions": {
-    "api/scan.py": {
-      "runtime": "vercel-python@0.5.0"
+  "builds": [
+    {
+      "src": "Dockerfile",
+      "use": "@vercel/docker"
     }
-  }
+  ]
 }
