@@ -29,7 +29,7 @@
             var uploadedImage = document.getElementById('uploadedImage');
             uploadedImage.src = URL.createObjectURL(file);
 
-            fetch('https://image-scanner-omega.vercel.app/scan', {
+            fetch('/scan', {
                 method: 'POST',
                 body: formData
             })

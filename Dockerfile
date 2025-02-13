@@ -1,5 +1,5 @@
 # Use the official Python image from the Docker Hub
-FROM python:3.9-slim
+FROM python:3-slim-buster AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -16,9 +16,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the requirements file into the container
 COPY requirements.txt .
-COPY entrypoint.sh .
-# Add execution permission to entrypoint script
-RUN chmod +x entrypoint.sh
+
 # Install the Python dependencies with detailed logging
 RUN pip install --no-cache-dir -r requirements.txt --log /app/pip-install.log
 
@@ -29,10 +27,7 @@ RUN pip uninstall -y ocrd-fork-pylsd && pip install ocrd-fork-pylsd
 COPY . .
 
 # # Expose the port the app runs on
-# EXPOSE 7070
+EXPOSE 7070
 
 # # Command to run the application
-# CMD ["python", "main.py"]
-
-# Execute the app
-ENTRYPOINT [ "./entrypoint.sh" ]
+CMD ["python", "main.py"]
