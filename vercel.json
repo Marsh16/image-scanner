@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/scan.py" }
   ],
   "headers": [
     {
@@ -11,12 +11,6 @@
           "value": "1"
         }
       ]
-    }
-  ],
-  "builds": [
-    {
-      "src": "Dockerfile",
-      "use": "@vercel/docker"
     }
   ]
 }
