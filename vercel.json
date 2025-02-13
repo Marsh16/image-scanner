@@ -1,3 +1,14 @@
 {
-  "rewrites": [{ "source": "/main.py", "destination": "/main.py" }]
+  "rewrites": [{ "source": "/main.py", "destination": "/main.py" }],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-vercel-enable-rewrite-caching",
+          "value": "1"
+        }
+      ]
+    }
+  ]
 }
