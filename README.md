@@ -1,5 +1,29 @@
-# Document Scanner
+## image-scanner
 
-### An interactive document scanner built in Python using OpenCV
+To make image processing like a scanner. Return image in base64. Input in image file 
 
-The scanner takes a poorly scanned image, finds the corners of the document, applies the perspective transformation to get a top-down view of the document, sharpens the image, and applies an adaptive color threshold to clean up the image.
+"file": image_file
+
+### Requirements
+
+- Docker
+
+### Development
+
+To run the project you need to run the following command:
+
+```shell
+$ docker-compose up
+```
+
+The API will be executed and you will have this available endpoints:
+
+- POST `http://localhost:7070/scan` - Input your image "file": image_file (form-data)
+
+### Deployment
+
+This project can be easily deployed into vercel by just importing the repo, no further configuration needed.
+
+### DEMO
+
+https://image-scanner.vercel.app/

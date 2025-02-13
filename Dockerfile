@@ -13,8 +13,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
+# Add execution permission to entrypoint script
+RUN chmod +x entrypoint.sh
+
 # Expose the port the app runs on
 EXPOSE 7070
 
-# Command to run the application
-CMD ["python", "main.py"]
+# Execute the app
+ENTRYPOINT ["./entrypoint.sh"]
