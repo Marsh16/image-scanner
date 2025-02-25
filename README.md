@@ -2,7 +2,7 @@
 
 To make image processing like a scanner. Return image in base64. Input in image file 
 
-"file": image_file
+"file": image
 
 ### Requirements
 
@@ -18,7 +18,7 @@ $ docker-compose up
 
 The API will be executed and you will have this available endpoints:
 
-- POST `http://localhost:7070/scan` - Input your image "file": image_file (form-data)
+- POST `http://localhost:7070/scan` - Input your image "file": image (base64 string)
 
 ### Deployment
 
@@ -26,4 +26,4 @@ This project can be easily deployed into vercel by just importing the repo, no f
 
 ### DEMO
 
-https://image-scanner.vercel.app/
+https://working-maddie-ciputra-510a8231.koyeb.app
