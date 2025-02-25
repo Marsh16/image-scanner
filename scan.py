@@ -190,14 +190,11 @@ class DocScanner(object):
         new_points = np.array([[p] for p in new_points], dtype = "int32")
         return new_points.reshape(4, 2)
 
-    def scan(self, image_path):
+    def scan(self, image):  # Modified to accept image object
         RESCALED_HEIGHT = 500.0
 
-        image = cv2.imread(image_path)
-        assert(image is not None)
-
-        ratio = image.shape[0] / RESCALED_HEIGHT
         orig = image.copy()
+        ratio = image.shape[0] / RESCALED_HEIGHT
         rescaled_image = imutils.resize(image, height=int(RESCALED_HEIGHT))
 
         screenCnt = self.get_contour(rescaled_image)
@@ -211,7 +208,11 @@ class DocScanner(object):
         sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
         thresh = cv2.adaptiveThreshold(sharpen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
 
-        return thresh
+        # Encode to base64
+        _, buffer = cv2.imencode('.jpg', thresh)
+        base64_image = base64.b64encode(buffer).decode('utf-8')
+
+        return base64_image  # Return base64 string
 
 
 if __name__ == "__main__":
@@ -234,11 +235,26 @@ if __name__ == "__main__":
     get_ext = lambda f: os.path.splitext(f)[1].lower()
 
     if im_file_path:
-        base64_image = scanner.scan(im_file_path)
-        print(base64_image)
+        try:
+            image = cv2.imread(im_file_path)
+            if image is None:
+                print(f"Error: Could not read image from {im_file_path}")
+            else:
+                base64_image = scanner.scan(image)
+                print(base64_image)
+        except Exception as e:
+            print(f"Error processing {im_file_path}: {e}")
 
     else:
-        im_files = [f for f in os.listdir(im_dir) if get_ext(f) in valid_formats]
-        for im in im_files:
-            base64_image = scanner.scan(im_dir + '/' + im)
-            print(base64_image)
+        try:
+            im_files = [f for f in os.listdir(im_dir) if get_ext(f) in valid_formats]
+            for im in im_files:
+                full_path = os.path.join(im_dir, im)
+                image = cv2.imread(full_path)
+                if image is None:
+                    print(f"Error: Could not read image from {full_path}")
+                else:
+                    base64_image = scanner.scan(image)
+                    print(base64_image)
+        except Exception as e:
+            print(f"Error processing images in {im_dir}: {e}")
