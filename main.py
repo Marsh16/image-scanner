@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import base64
 import cv2
@@ -7,6 +7,10 @@ from scan import DocScanner # Assuming you saved the DocScanner class in scan.py
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/')
+def index():
+    return render_template('index.html') #renders the html.
 
 @app.route('/scan', methods=['POST'])
 def scan_image():

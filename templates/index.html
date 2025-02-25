@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Scanner</title>
+</head>
+<body>
+    <input type="file" id="fileInput">
+    <button type="button" id="uploadButton" onclick="uploadImage()">Upload</button>
+    <br>
+    <div style="display: flex;">
+        <img id="uploadedImage" src="#" width="50%" alt="Uploaded Image">
+        <img id="processedImage" src="#" width="50%" alt="Processed Image">
+    </div>
+    <script>
+        async function uploadImage() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+
+            if (!file) {
+                return alert("No file is selected!");
+            }
+
+            // Display the original image before uploading
+            var uploadedImage = document.getElementById('uploadedImage');
+            uploadedImage.src = URL.createObjectURL(file);
+
+            // Convert file to base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result.replace('data:', '').replace(/^.+,/, ''); // Extract base64 part
+                fetch('/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ file: base64String }) // Send base64 as JSON
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data);
+                        // Display the processed image
+                        var processedImage = document.getElementById('processedImage');
+                        processedImage.src = 'data:image/jpeg;base64,' + data.image;
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            };
+            reader.readAsDataURL(file); // Start reading the file
+        }
+    </script>
+</body>
+</html>
